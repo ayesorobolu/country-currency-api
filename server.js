@@ -1,6 +1,7 @@
 import express from "express";
 import dotenv from "dotenv";
 import countriesRouter from "./routes/countriesRoutes.js";
+import statusRouter from "./routes/statusRoutes.js";
 
 dotenv.config();
 
@@ -14,6 +15,7 @@ app.get("/", (req, res) => {
 })
 
 app.use("/countries", countriesRouter);
+app.use('/status', statusRouter);
 
 app.listen(PORT, () => {
     console.log(`server running at ${PORT}`)

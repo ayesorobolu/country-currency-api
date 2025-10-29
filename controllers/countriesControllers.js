@@ -101,7 +101,3 @@ export const deleteCountry = async (req, res) => {
         return res.status(500).json({ error: 'Internal server error' });
       }
 }
-
-export const getStatus = async (req, res) => {
-    res.json({ total_countries: 0, last_refreshed_at: null });
-}
