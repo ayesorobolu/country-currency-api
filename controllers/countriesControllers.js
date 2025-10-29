@@ -1,6 +1,7 @@
 import { refreshCountries } from '../services/countryService.js';
 import fs from 'fs';
 import path from 'path';
+import pool from '../DB/pool.js';
 
 export const refreshCountry = async (req, res) => {
     try {
@@ -19,7 +20,35 @@ export const refreshCountry = async (req, res) => {
 };
 
 export const getCountries = async (req, res) => {
-    res.json({ ok: true, route: 'GET /countries', query: req.query });
+try {
+    const { region, currency, sort } = req.query;
+
+    let orderBy = 'name ASC';
+    if (sort === 'gdp_desc') orderBy = 'estimated_gdp DESC';
+   else if (sort === 'gdp_asc') orderBy = 'estimated_gdp ASC';
+   else if (sort === 'name_desc') orderBy = 'name DESC';
+
+   const filters = [];
+const params = [];
+
+if (region) { filters.push('region = ?'); params.push(region); }
+if (currency) { filters.push('currency_code = ?'); params.push(currency); }
+
+const where = filters.length ? `WHERE ${filters.join(' AND ')}` : '';
+
+const sql = `
+  SELECT id, name, capital, region, population, currency_code, exchange_rate, estimated_gdp, flag_url, last_refreshed_at
+  FROM countries
+  ${where}
+  ORDER BY ${orderBy}
+`;
+
+const [rows] = await pool.query(sql, params);
+return res.json(rows);
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
 }
 
 export const getImage = async (req, res) => {
