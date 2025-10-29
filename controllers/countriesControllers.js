@@ -1,4 +1,6 @@
 import { refreshCountries } from '../services/countryService.js';
+import fs from 'fs';
+import path from 'path';
 
 export const refreshCountry = async (req, res) => {
     try {
@@ -21,8 +23,12 @@ export const getCountries = async (req, res) => {
 }
 
 export const getImage = async (req, res) => {
-    res.json({ ok: true, route: 'GET /countries/image' });
-}
+    const imgPath = path.join(process.cwd(), 'cache', 'summary.png');
+    if (!fs.existsSync(imgPath)) {
+      return res.status(404).json({ error: 'Summary image not found' });
+    }
+    return res.sendFile(imgPath);
+};
 
 export const getCountry = async (req, res) => {
     res.json({ ok: true, route: 'GET /countries/:name', params: req.params });

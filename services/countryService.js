@@ -1,5 +1,6 @@
 import pool from '../DB/pool.js';
 import { fetchCountries, fetchUsdRates } from './externalAPIServices.js';
+import { generateSummaryImage} from '../services/imageService.js';
 
 const UPSERT_SQL = `
   INSERT INTO countries (
@@ -85,6 +86,7 @@ export async function refreshCountries() {
       );
   
       await conn.commit();
+      await generateSummaryImage();
     } catch (e) {
       await conn.rollback();
       throw e;
