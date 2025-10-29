@@ -21,14 +21,21 @@ Node.js + Express + MySQL API that fetches countries and USD exchange rates, cac
    -- Run the file contents in Workbench.
 
 4. Environment
-   Create `.env` in project root:
-   PORT=3050
-   DB_HOST=localhost
-   DB_PORT=3306
-   DB_USER=your_user
-   DB_PASSWORD=your_password
-   DB_NAME=currency_api
-   DB_POOL_LIMIT=10
+```env
+# Database Configuration
+DB_HOST=localhost                    # Your MySQL server address
+DB_USER=root                         # Your MySQL username
+DB_PASSWORD=your_actual_password     # Your MySQL password (REQUIRED)
+DB_NAME=country_exchange_db          # Database name (create this first)
+DB_PORT=3306                         # MySQL port (usually 3306)
+
+# Server Configuration
+PORT=3000                           # Port for your API server
+
+# External APIs 
+COUNTRIES_API_URL=https://restcountries.com/v2/all
+EXCHANGE_RATES_API_URL=https://open.er-api.com/v6/latest/USD
+```
 
 
    ## Run
