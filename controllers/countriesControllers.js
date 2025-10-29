@@ -1,7 +1,20 @@
+import { refreshCountries } from '../services/countryService.js';
 
 export const refreshCountry = async (req, res) => {
-res.status(200).json({ ok: true, route: 'POST /countries/refresh' });
-}
+    try {
+        await refreshCountries();
+        return res.status(200).json({ ok: true });
+      } catch (e) {
+        if (e.statusCode === 503) {
+          return res.status(503).json({
+            error: 'External data source unavailable',
+            details: 'Could not fetch data from REST Countries or Exchange Rates'
+          });
+        }
+        console.error(e);
+        return res.status(500).json({ error: 'Internal server error' });
+      }
+};
 
 export const getCountries = async (req, res) => {
     res.json({ ok: true, route: 'GET /countries', query: req.query });
