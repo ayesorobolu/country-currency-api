@@ -60,11 +60,46 @@ export const getImage = async (req, res) => {
 };
 
 export const getCountry = async (req, res) => {
-    res.json({ ok: true, route: 'GET /countries/:name', params: req.params });
+    try {
+        const { name } = req.params;
+      
+        const [rows] = await pool.query(
+          `SELECT id, name, capital, region, population, currency_code, exchange_rate, estimated_gdp, flag_url, last_refreshed_at
+           FROM countries
+           WHERE name_ci = LOWER(?)
+           LIMIT 1`,
+          [name]
+        );
+      
+        if (!rows.length) {
+          return res.status(404).json({ error: 'Country not found' });
+        }
+      
+        return res.json(rows[0]);
+      } catch (e) {
+        console.error(e);
+        return res.status(500).json({ error: 'Internal server error' });
+      }
 }
 
 export const deleteCountry = async (req, res) => {
-    res.json({ ok: true, route: 'DELETE /countries/:name', params: req.params });
+    try {
+        const { name } = req.params;
+      
+        const [result] = await pool.query(
+          'DELETE FROM countries WHERE name_ci = LOWER(?)',
+          [name]
+        );
+      
+        if (result.affectedRows === 0) {
+          return res.status(404).json({ error: 'Country not found' });
+        }
+      
+        return res.json({ deleted: true });
+      } catch (e) {
+        console.error(e);
+        return res.status(500).json({ error: 'Internal server error' });
+      }
 }
 
 export const getStatus = async (req, res) => {
